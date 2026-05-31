@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hospital Triage – Complete Function & Concept Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Fira+Mono&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: #1a1a2e;
+      background: #f5f7fa;
+      padding: 40px 20px;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 50px 60px;
+      border-radius: 6px;
+      box-shadow: 0 2px 18px rgba(0,0,0,0.12);
+    }
+
+    /* ── Cover ── */
+    .cover {
+      text-align: center;
+      border-bottom: 3px solid #1565c0;
+      padding-bottom: 36px;
+      margin-bottom: 40px;
+    }
+    .cover h1 { font-size: 26px; color: #1565c0; margin-bottom: 6px; }
+    .cover .subtitle { font-size: 14px; color: #555; }
+    .cover .meta { margin-top: 16px; font-size: 13px; color: #777; }
+
+    /* ── Section headings ── */
+    h2 {
+      font-size: 18px;
+      color: #0d47a1;
+      border-left: 5px solid #1565c0;
+      padding-left: 10px;
+      margin: 44px 0 18px;
+    }
+    h3 {
+      font-size: 15px;
+      color: #1a237e;
+      margin: 28px 0 8px;
+      border-bottom: 1px dashed #c5cae9;
+      padding-bottom: 3px;
+    }
+
+    /* ── Code blocks ── */
+    pre, code {
+      font-family: 'Fira Mono', 'Courier New', monospace;
+      font-size: 12.5px;
+    }
+    pre {
+      background: #f0f4ff;
+      border: 1px solid #c5cae9;
+      border-radius: 4px;
+      padding: 14px 18px;
+      overflow-x: auto;
+      margin: 10px 0 16px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    code { background: #e8eaf6; padding: 1px 5px; border-radius: 3px; }
+
+    /* ── Keyword / label badges ── */
+    .badge {
+      display: inline-block;
+      background: #1565c0;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 3px;
+      padding: 2px 7px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge.green  { background: #2e7d32; }
+    .badge.orange { background: #e65100; }
+    .badge.purple { background: #6a1b9a; }
+
+    /* ── Info boxes ── */
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #1976d2;
+      border-radius: 3px;
+      padding: 12px 16px;
+      margin: 12px 0 18px;
+    }
+    .warn-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      border-radius: 3px;
+      padding: 12px 16px;
+      margin: 12px 0 18px;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 22px;
+      font-size: 13px;
+    }
+    th {
+      background: #1565c0;
+      color: #fff;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    td { padding: 7px 12px; border-bottom: 1px solid #e0e0e0; }
+    tr:nth-child(even) td { background: #f5f7fa; }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { box-shadow: none; padding: 30px 40px; }
+      pre { page-break-inside: avoid; }
+      h2 { page-break-before: always; }
+      h2:first-of-type { page-break-before: avoid; }
+    }
+
+    /* ── TOC ── */
+    .toc { margin: 20px 0 10px; }
+    .toc li { margin: 4px 0; }
+    .toc a { color: #1565c0; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    hr { border: none; border-top: 1px solid #e0e0e0; margin: 30px 0; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══════════════ COVER ═══════════════ -->
+  <div class="cover">
+    <h1>Smart Hospital Priority &amp; Routing System</h1>
+    <div class="subtitle">Complete Function, String &amp; Structure Reference</div>
+    <div class="meta">
+      Course: CS222IA – Principles of Programming using C<br/>
+      RV College of Engineering, Bengaluru | PBL Mini Project – Part B
+    </div>
+  </div>
+
+  <!-- ═══════════════ TABLE OF CONTENTS ═══════════════ -->
+  <h2 id="toc">Table of Contents</h2>
+  <ol class="toc">
+    <li><a href="#struct">The <code>Patient</code> Struct</a></li>
+    <li><a href="#globals">Global Variables</a></li>
+    <li><a href="#string-funcs">String &amp; Time Library Functions</a>
+      <ul style="margin-left:20px">
+        <li><a href="#strcpy">strcpy</a></li>
+        <li><a href="#strcmp">strcmp</a></li>
+        <li><a href="#strstr">strstr</a></li>
+        <li><a href="#strcspn">strcspn</a></li>
+        <li><a href="#strlen">strlen</a></li>
+        <li><a href="#strftime">strftime</a></li>
+      </ul>
+    </li>
+    <li><a href="#io-funcs">Standard I/O Functions</a>
+      <ul style="margin-left:20px">
+        <li><a href="#printf">printf / fprintf</a></li>
+        <li><a href="#scanf">scanf / sscanf</a></li>
+        <li><a href="#fgets">fgets</a></li>
+        <li><a href="#fopen">fopen / fclose</a></li>
+        <li><a href="#getchar">getchar</a></li>
+      </ul>
+    </li>
+    <li><a href="#program-funcs">Program-Defined Functions</a>
+      <ul style="margin-left:20px">
+        <li><a href="#getTimestamp">getCurrentTimestamp</a></li>
+        <li><a href="#calcRisk">calculateRiskScore</a></li>
+        <li><a href="#classifyPriority">classifyPriority</a></li>
+        <li><a href="#routeDept">routeDepartment</a></li>
+        <li><a href="#logToFile">logToFile</a></li>
+        <li><a href="#loadFromFile">loadFromFile</a></li>
+        <li><a href="#rewriteLog">rewriteLogFile</a></li>
+        <li><a href="#bubbleSort">bubbleSortByScore</a></li>
+        <li><a href="#addPatient">addPatient</a></li>
+        <li><a href="#displayAll">displayAllPatients</a></li>
+        <li><a href="#viewLog">viewLogFile</a></li>
+        <li><a href="#searchByName">searchPatientByName</a></li>
+        <li><a href="#deleteByID">deletePatientByID</a></li>
+        <li><a href="#deleteAll">deleteAllRecords</a></li>
+        <li><a href="#deleteMenu">deleteMenu</a></li>
+        <li><a href="#displayMenu">displayMenu</a></li>
+        <li><a href="#main">main</a></li>
+      </ul>
+    </li>
+    <li><a href="#concepts">C Concepts Summary</a></li>
+  </ol>
+
+  <!-- ═══════════════ 1. STRUCT ═══════════════ -->
+  <h2 id="struct">1. The <code>Patient</code> Struct</h2>
+
+  <p>A <strong>struct</strong> (structure) is a user-defined data type that groups related variables of different types under one name. Without it, you would need 11 separate arrays for 11 fields — making the code unmanageable.</p>
+
+  <pre>struct Patient {
+    int    id;             // unique patient number
+    char   name[50];       // patient name (max 49 chars + '\0')
+    int    age;
+    float  temperature;    // body temp in Celsius
+    int    bp;             // systolic blood pressure mmHg
+    int    pulse;          // heart rate bpm
+    char   symptom[100];
+    int    riskScore;      // calculated penalty score
+    char   priority[20];   // "EMERGENCY" / "URGENT" / "NORMAL"
+    char   department[50]; // routed department name
+    char   timestamp[30];  // "YYYY-MM-DD HH:MM:SS"
+};</pre>
+
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Why that type</th></tr>
+    <tr><td>id</td><td>int</td><td>Whole numbers only; no decimals needed.</td></tr>
+    <tr><td>name, symptom, priority, department, timestamp</td><td>char[]</td><td>C has no native <em>string</em> type; strings are null-terminated character arrays.</td></tr>
+    <tr><td>temperature</td><td>float</td><td>Decimal precision needed (e.g. 38.5 °C).</td></tr>
+    <tr><td>bp, pulse, age, riskScore</td><td>int</td><td>Whole-number measurements.</td></tr>
+  </table>
+
+  <div class="info-box">
+    <strong>Pointer to struct (<code>struct Patient *p</code>):</strong> Several functions receive a pointer to a <code>Patient</code> so they can modify it directly. Use <code>p-&gt;field</code> (arrow operator) to access fields through a pointer, or <code>(*p).field</code> — both are equivalent.
+  </div>
+
+  <!-- ═══════════════ 2. GLOBALS ═══════════════ -->
+  <h2 id="globals">2. Global Variables</h2>
+
+  <pre>struct Patient patients[MAX_PATIENTS];   // array of up to 200 Patient records
+int numPatients = 0;                     // how many slots are currently used
+int maxID       = 0;                     // highest ID ever assigned</pre>
+
+  <table>
+    <tr><th>Variable</th><th>Purpose</th></tr>
+    <tr><td><code>patients[]</code></td><td>Single array that holds both records loaded from disk AND patients added in the current session.</td></tr>
+    <tr><td><code>numPatients</code></td><td>Acts as both a count and the index of the next free slot (<code>patients[numPatients] = p; numPatients++;</code>).</td></tr>
+    <tr><td><code>maxID</code></td><td>Ensures new IDs are always unique even when old records were deleted (creating gaps like 1, 3, 4). New patients get <code>maxID + 1</code>.</td></tr>
+  </table>
+
+  <!-- ═══════════════ 3. STRING FUNCTIONS ═══════════════ -->
+  <h2 id="string-funcs">3. String &amp; Time Library Functions</h2>
+
+  <!-- strcpy -->
+  <h3 id="strcpy"><span class="badge">string.h</span> strcpy(destination, source)</h3>
+  <p>Copies every character from <code>source</code> to <code>destination</code>, including the null terminator <code>'\0'</code>.</p>
+  <div class="warn-box">
+    <strong>Why not use <code>=</code>?</strong> In C, arrays cannot be assigned with <code>=</code>. Writing <code>p.priority = "EMERGENCY"</code> is a compile error. <code>strcpy</code> is the correct way.
+  </div>
+  <pre>strcpy(p->priority, "EMERGENCY");    // classifyPriority()
+strcpy(p->department, "Cardiology"); // routeDepartment()
+strcpy(sym, p->symptom);             // copy before modifying (safe buffer)
+strcpy(nameLower, patients[i].name); // copy before lowercasing</pre>
+  <table>
+    <tr><th>Parameter</th><th>Meaning</th></tr>
+    <tr><td>destination</td><td>char array that receives the string</td></tr>
+    <tr><td>source</td><td>string to copy from (can be a literal or another array)</td></tr>
+  </table>
+
+  <!-- strcmp -->
+  <h3 id="strcmp"><span class="badge">string.h</span> strcmp(string1, string2)</h3>
+  <p>Compares two strings character by character and returns an integer.</p>
+  <table>
+    <tr><th>Return value</th><th>Meaning</th></tr>
+    <tr><td>0</td><td>Both strings are <strong>identical</strong></td></tr>
+    <tr><td>&gt; 0</td><td>string1 comes after string2 alphabetically</td></tr>
+    <tr><td>&lt; 0</td><td>string1 comes before string2 alphabetically</td></tr>
+  </table>
+  <div class="warn-box">
+    <strong>Why not use <code>==</code>?</strong> <code>==</code> on char arrays compares <em>memory addresses</em>, not content. <code>strcmp</code> compares the actual characters.
+  </div>
+  <pre>if (strcmp(p.priority, "EMERGENCY") == 0) ...  // addPatient() colour selection
+if (strcmp(confirm, "YES") != 0) ...            // deleteAllRecords() safety check</pre>
+
+  <!-- strstr -->
+  <h3 id="strstr"><span class="badge">string.h</span> strstr(haystack, needle)</h3>
+  <p>Scans <code>haystack</code> for the first occurrence of <code>needle</code>.</p>
+  <table>
+    <tr><th>Return value</th><th>Meaning</th></tr>
+    <tr><td>non-NULL pointer</td><td>needle found (truthy in an if-condition)</td></tr>
+    <tr><td>NULL</td><td>needle not found (falsy)</td></tr>
+  </table>
+  <pre>if (strstr(sym, "chest") || strstr(sym, "heart"))
+    strcpy(p->department, "Cardiology");         // routeDepartment()
+
+if (strstr(nameLower, query) != NULL) { ... }   // searchPatientByName()</pre>
+  <p>This allows <em>partial, keyword-based</em> matching — a patient who types "severe chest tightness" still routes to Cardiology because <code>strstr</code> finds "chest" anywhere inside the string.</p>
+
+  <!-- strcspn -->
+  <h3 id="strcspn"><span class="badge">string.h</span> strcspn(string, reject_set)</h3>
+  <p>Returns the number of characters at the start of <code>string</code> that do <em>not</em> appear in <code>reject_set</code>. Effectively returns the index of the first matching character.</p>
+  <div class="info-box">
+    <strong>Why needed with fgets?</strong> <code>fgets</code> reads the <code>'\n'</code> (newline) into the buffer. If not removed, it becomes part of the name or confirmation string, causing subtle bugs.
+  </div>
+  <pre>fgets(p.name, 50, stdin);
+p.name[strcspn(p.name, "\n")] = '\0';
+// "Rajesh\n"  →  strcspn returns 6  →  p.name[6] = '\0'  →  "Rajesh"</pre>
+  <p>Used after <strong>every</strong> <code>fgets</code> call in the program: patient name, chief symptom, search query, delete confirmation.</p>
+
+  <!-- strlen -->
+  <h3 id="strlen"><span class="badge">string.h</span> strlen(string)</h3>
+  <p>Returns the number of characters in a string, <em>not</em> counting the null terminator.</p>
+  <pre>strlen("hello")  →  5
+strlen("")       →  0</pre>
+  <p>Used in <code>loadFromFile()</code> to trim trailing spaces that the fixed-width format specifier <code>%-20s</code> pads into fields:</p>
+  <pre>int len = (int)strlen(p.name) - 1;
+while (len >= 0 && p.name[len] == ' ') {
+    p.name[len] = '\0';
+    len--;
+}</pre>
+
+  <!-- strftime -->
+  <h3 id="strftime"><span class="badge">time.h</span> strftime(buffer, size, format, tm_struct)</h3>
+  <p>Formats a <code>struct tm</code> (broken-down time) into a human-readable string according to a format string.</p>
+  <table>
+    <tr><th>Format code</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>%Y</td><td>4-digit year</td><td>2026</td></tr>
+    <tr><td>%m</td><td>2-digit month</td><td>05</td></tr>
+    <tr><td>%d</td><td>2-digit day</td><td>22</td></tr>
+    <tr><td>%H</td><td>Hour (24h)</td><td>14</td></tr>
+    <tr><td>%M</td><td>Minutes</td><td>30</td></tr>
+    <tr><td>%S</td><td>Seconds</td><td>07</td></tr>
+  </table>
+  <pre>strftime(buffer, 30, "%Y-%m-%d %H:%M:%S", t);
+// Result: "2026-05-22 14:30:07"</pre>
+
+  <!-- ═══════════════ 4. I/O FUNCTIONS ═══════════════ -->
+  <h2 id="io-funcs">4. Standard I/O Functions</h2>
+
+  <h3 id="printf"><span class="badge orange">stdio.h</span> printf / fprintf</h3>
+  <p><code>printf(format, ...)</code> prints formatted text to the <strong>terminal</strong>.<br/>
+  <code>fprintf(fp, format, ...)</code> does the same but writes to a <strong>file</strong>.</p>
+  <pre>printf("Name: %s | Age: %d | Temp: %.1f\n", p.name, p.age, p.temperature);
+fprintf(fp, "[%s] ID:%d | Name:%-20s ...\n", p.timestamp, p.id, p.name);</pre>
+  <table>
+    <tr><th>Format specifier</th><th>Meaning</th></tr>
+    <tr><td>%d</td><td>int</td></tr>
+    <tr><td>%f / %.1f</td><td>float (%.1f = 1 decimal place)</td></tr>
+    <tr><td>%s</td><td>string (char array)</td></tr>
+    <tr><td>%-20s</td><td>left-aligned string in a 20-char wide field (padded with spaces)</td></tr>
+    <tr><td>%3d</td><td>right-aligned int in a 3-char wide field</td></tr>
+  </table>
+
+  <h3 id="scanf"><span class="badge orange">stdio.h</span> scanf / sscanf</h3>
+  <p><code>scanf(format, &amp;var)</code> reads formatted input from the <strong>keyboard</strong>.<br/>
+  <code>sscanf(string, format, &amp;var)</code> reads formatted input from a <strong>string in memory</strong> — used in <code>loadFromFile()</code> to parse each line of the log file.</p>
+  <pre>scanf("%d", &targetID);    // read int from keyboard
+
+int parsed = sscanf(line,
+    "[%[^]]] ID:%d | Name:%20[^|] ...",
+    p.timestamp, &p.id, p.name, ...);
+// %[^]] reads characters until ']' is found
+// %[^|] reads characters until '|' is found</pre>
+  <div class="info-box">
+    <strong>Why sscanf?</strong> The log file uses a fixed format written by <code>fprintf</code>. <code>sscanf</code> can reverse-parse each line using the same template, reconstructing each <code>Patient</code> field from its text representation.
+  </div>
+
+  <h3 id="fgets"><span class="badge orange">stdio.h</span> fgets(buffer, size, stream)</h3>
+  <p>Reads at most <code>size - 1</code> characters from <code>stream</code> into <code>buffer</code>, stopping at <code>'\n'</code> or EOF. Always null-terminates. The <code>'\n'</code> is kept in the buffer.</p>
+  <pre>fgets(p.name, 50, stdin);         // read from keyboard
+fgets(line, sizeof(line), fp);    // read one line from file</pre>
+  <div class="warn-box">
+    <strong>Why fgets and not scanf for strings?</strong> <code>scanf("%s", ...)</code> stops at whitespace, so names like "Ravi Kumar" would only read "Ravi". <code>fgets</code> reads the entire line including spaces.
+  </div>
+
+  <h3 id="fopen"><span class="badge orange">stdio.h</span> fopen / fclose</h3>
+  <p><code>fopen(filename, mode)</code> opens a file and returns a <code>FILE *</code> pointer. Always check for <code>NULL</code> (file could not be opened). <code>fclose(fp)</code> flushes and closes the file.</p>
+  <table>
+    <tr><th>Mode</th><th>Behaviour</th><th>Used in</th></tr>
+    <tr><td>"a"</td><td>Append — adds to end, never deletes existing content</td><td>logToFile()</td></tr>
+    <tr><td>"r"</td><td>Read — file must exist</td><td>loadFromFile(), viewLogFile()</td></tr>
+    <tr><td>"w"</td><td>Write — creates file or truncates (empties) existing file</td><td>rewriteLogFile(), deleteAllRecords()</td></tr>
+  </table>
+
+  <h3 id="getchar"><span class="badge orange">stdio.h</span> getchar()</h3>
+  <p>Reads one character from stdin. Used to consume the leftover <code>'\n'</code> that <code>scanf("%d", ...)</code> leaves in the input buffer, preventing <code>fgets</code> from immediately reading an empty line.</p>
+  <pre>while (getchar() != '\n');   // drain buffer until newline is consumed</pre>
+
+  <!-- ═══════════════ 5. PROGRAM FUNCTIONS ═══════════════ -->
+  <h2 id="program-funcs">5. Program-Defined Functions</h2>
+
+  <!-- getCurrentTimestamp -->
+  <h3 id="getTimestamp">getCurrentTimestamp(char *buffer)</h3>
+  <p><span class="badge green">void</span> Writes the current date and time as a formatted string into <code>buffer</code>.</p>
+  <pre>void getCurrentTimestamp(char *buffer) {
+    time_t now = time(NULL);          // seconds since Jan 1 1970
+    struct tm *t = localtime(&now);   // convert to local broken-down time
+    strftime(buffer, 30, "%Y-%m-%d %H:%M:%S", t);
+}</pre>
+  <table>
+    <tr><th>Call</th><th>Purpose</th></tr>
+    <tr><td><code>time(NULL)</code></td><td>Returns current Unix timestamp (seconds since epoch)</td></tr>
+    <tr><td><code>localtime(&amp;now)</code></td><td>Converts to <code>struct tm</code> in local timezone</td></tr>
+    <tr><td><code>strftime</code></td><td>Formats into "YYYY-MM-DD HH:MM:SS"</td></tr>
+  </table>
+
+  <!-- calculateRiskScore -->
+  <h3 id="calcRisk">calculateRiskScore(float temp, int bp, int pulse)</h3>
+  <p><span class="badge green">int</span> Assigns penalty points for each abnormal vital sign and returns the total composite risk score.</p>
+  <pre>int calculateRiskScore(float temp, int bp, int pulse) {
+    int score = 0;
+    if      (temp >= 39.5) score += 40;   // high fever
+    else if (temp >= 38.0) score += 20;   // mild fever
+    else if (temp <= 35.0) score += 30;   // hypothermia
+
+    if      (bp >= 180)    score += 40;   // hypertensive crisis
+    else if (bp >= 140)    score += 20;   // stage 2 hypertension
+    else if (bp <= 90)     score += 30;   // hypotension / shock risk
+
+    if      (pulse >= 120) score += 30;   // tachycardia
+    else if (pulse <= 50)  score += 30;   // bradycardia
+    return score;
+}</pre>
+  <p>Maximum possible score: 40 + 40 + 30 = <strong>110</strong>. Score ≥ 70 → EMERGENCY, ≥ 35 → URGENT, else NORMAL.</p>
+
+  <!-- classifyPriority -->
+  <h3 id="classifyPriority">classifyPriority(struct Patient *p)</h3>
+  <p><span class="badge green">void</span> Uses the already-computed <code>riskScore</code> to write the priority string into <code>p->priority</code> via <code>strcpy</code>.</p>
+  <pre>void classifyPriority(struct Patient *p) {
+    if      (p->riskScore >= 70) strcpy(p->priority, "EMERGENCY");
+    else if (p->riskScore >= 35) strcpy(p->priority, "URGENT");
+    else                         strcpy(p->priority, "NORMAL");
+}</pre>
+  <p>Receives a <strong>pointer</strong> so the modification affects the original struct in the caller, not a copy.</p>
+
+  <!-- routeDepartment -->
+  <h3 id="routeDept">routeDepartment(struct Patient *p)</h3>
+  <p><span class="badge green">void</span> Converts the symptom to lowercase, then uses <code>strstr</code> keyword matching to set the appropriate department.</p>
+  <pre>void routeDepartment(struct Patient *p) {
+    char sym[100];
+    strcpy(sym, p->symptom);                // safe working copy
+    int i;
+    for (i = 0; sym[i]; i++)               // manual tolower
+        if (sym[i] >= 'A' &amp;&amp; sym[i] &lt;= 'Z') sym[i] += 32;
+
+    if (strstr(sym, "chest") || strstr(sym, "heart"))
+        strcpy(p->department, "Cardiology");
+    else if (strstr(sym, "seizure") || strstr(sym, "headache") ...)
+        strcpy(p->department, "Neurology");
+    // ... etc.
+}</pre>
+  <table>
+    <tr><th>Keywords</th><th>Department</th></tr>
+    <tr><td>chest, heart</td><td>Cardiology</td></tr>
+    <tr><td>seizure, dizziness, headache, neuro</td><td>Neurology</td></tr>
+    <tr><td>fracture, bone, joint, sprain</td><td>Orthopedics</td></tr>
+    <tr><td>fever, vomit, diarrhoea, abdomen</td><td>General Medicine</td></tr>
+    <tr><td>burn, wound, injury</td><td>Emergency Surgery</td></tr>
+    <tr><td>(anything else)</td><td>General OPD</td></tr>
+  </table>
+
+  <!-- logToFile -->
+  <h3 id="logToFile">logToFile(struct Patient p)</h3>
+  <p><span class="badge green">void</span> Appends one formatted patient record to <code>patients.txt</code> using mode <code>"a"</code> so existing records are preserved.</p>
+  <pre>void logToFile(struct Patient p) {
+    FILE *fp = fopen(LOG_FILE, "a");
+    if (fp == NULL) { printf("Error..."); return; }
+    fprintf(fp, "[%s] ID:%d | Name:%-20s | Age:%3d | ...\n", ...);
+    fclose(fp);
+}</pre>
+  <p>Note that <code>p</code> is passed <strong>by value</strong> (a copy) here because the function only reads, never modifies, the struct.</p>
+
+  <!-- loadFromFile -->
+  <h3 id="loadFromFile">loadFromFile()</h3>
+  <p><span class="badge green">void</span> Called once at startup. Opens <code>patients.txt</code>, reads every line with <code>fgets</code>, and parses each line back into a <code>Patient</code> struct using <code>sscanf</code>. This is what makes Option 2 (View All Patients) show records from previous sessions.</p>
+  <pre>void loadFromFile() {
+    FILE *fp = fopen(LOG_FILE, "r");
+    if (fp == NULL) return;  // first run, no file yet
+    char line[400];
+    while (fgets(line, sizeof(line), fp) != NULL ...) {
+        struct Patient p;
+        int parsed = sscanf(line, "[%[^]]] ID:%d | Name:%20[^|] | ...", ...);
+        if (parsed == 10) {
+            // trim trailing spaces from %-20 padding
+            int len = strlen(p.name) - 1;
+            while (len >= 0 &amp;&amp; p.name[len] == ' ') p.name[len--] = '\0';
+            // update maxID
+            if (p.id > maxID) maxID = p.id;
+            patients[numPatients++] = p;
+        }
+    }
+    fclose(fp);
+}</pre>
+  <p><code>sscanf</code> returns the number of items successfully matched. Checking <code>parsed == 10</code> ensures only complete, well-formed lines are loaded.</p>
+
+  <!-- rewriteLogFile -->
+  <h3 id="rewriteLog">rewriteLogFile()</h3>
+  <p><span class="badge green">void</span> Opens <code>patients.txt</code> in <code>"w"</code> mode (which erases the file) and rewrites every remaining patient from <code>patients[]</code>. Called after any deletion to keep the file in sync with in-memory state.</p>
+
+  <!-- bubbleSortByScore -->
+  <h3 id="bubbleSort">bubbleSortByScore()</h3>
+  <p><span class="badge green">void</span> Sorts the global <code>patients[]</code> array in <strong>descending</strong> order of <code>riskScore</code> (highest score = most critical = displayed first).</p>
+  <pre>void bubbleSortByScore() {
+    int i, j;
+    struct Patient temp;
+    for (i = 0; i &lt; numPatients - 1; i++) {
+        for (j = 0; j &lt; numPatients - i - 1; j++) {
+            if (patients[j].riskScore &lt; patients[j+1].riskScore) {
+                temp         = patients[j];       // struct assignment copies all fields
+                patients[j]  = patients[j+1];
+                patients[j+1]= temp;
+            }
+        }
+    }
+}</pre>
+  <div class="info-box">
+    Swapping two <code>struct Patient</code> variables with <code>temp = a; a = b; b = temp;</code> works because C copies every field of the struct automatically — no need to copy field by field.
+  </div>
+
+  <!-- addPatient -->
+  <h3 id="addPatient">addPatient()</h3>
+  <p><span class="badge green">void</span> The full patient intake pipeline:</p>
+  <ol style="margin: 8px 0 8px 20px">
+    <li>Assign a unique ID (<code>++maxID</code>)</li>
+    <li>Read name via <code>fgets</code> + <code>strcspn</code> trim</li>
+    <li>Read age, temperature, BP, pulse via <code>scanf</code></li>
+    <li>Read symptom via <code>fgets</code> + <code>strcspn</code> trim</li>
+    <li>Call <code>calculateRiskScore</code> → <code>classifyPriority</code> → <code>routeDepartment</code> → <code>getCurrentTimestamp</code></li>
+    <li>Store in <code>patients[numPatients++]</code></li>
+    <li>Print summary box with colour-coded priority using <code>strcmp</code></li>
+    <li>Call <code>logToFile</code> to persist</li>
+  </ol>
+  <div class="warn-box">
+    <strong>getchar() before fgets:</strong> After <code>scanf("%d", &choice)</code> in <code>main</code>, the <code>'\n'</code> is still in the buffer. The first <code>getchar()</code> in <code>addPatient()</code> consumes it so the subsequent <code>fgets</code> reads the actual name.
+  </div>
+
+  <!-- displayAllPatients -->
+  <h3 id="displayAll">displayAllPatients()</h3>
+  <p><span class="badge green">void</span> Calls <code>bubbleSortByScore()</code>, then prints a colour-coded table of all patients. Colour is selected using <code>strcmp</code> on the priority field.</p>
+  <pre>const char *col = GREEN;
+if      (strcmp(patients[i].priority, "EMERGENCY") == 0) col = RED;
+else if (strcmp(patients[i].priority, "URGENT")    == 0) col = YELLOW;
+printf("%s ... \n" RESET, col, ...);</pre>
+  <p>The ANSI escape codes (<code>\033[1;31m</code> etc.) are defined as macros and are concatenated directly into format strings — this works because adjacent string literals are merged by the C compiler.</p>
+
+  <!-- viewLogFile -->
+  <h3 id="viewLog">viewLogFile()</h3>
+  <p><span class="badge green">void</span> Opens the file in read mode and prints raw lines as-is using <code>fgets</code> in a loop — no parsing, no sorting. Useful for auditing the exact file content.</p>
+
+  <!-- searchPatientByName -->
+  <h3 id="searchByName">searchPatientByName()</h3>
+  <p><span class="badge green">void</span> Case-insensitive partial name search across all records:</p>
+  <ol style="margin: 8px 0 8px 20px">
+    <li>Read query with <code>fgets</code> + <code>strcspn</code> trim</li>
+    <li>Manually lowercase the query string</li>
+    <li>For each patient, <code>strcpy</code> the name into a local buffer, lowercase it</li>
+    <li>Use <code>strstr(nameLower, query)</code> — if non-NULL, print the match</li>
+  </ol>
+  <p>A local copy is used for lowercasing so the original <code>patients[i].name</code> (with its original casing) is never modified.</p>
+
+  <!-- deletePatientByID -->
+  <h3 id="deleteByID">deletePatientByID()</h3>
+  <p><span class="badge green">void</span> Deletes one patient by ID, keeping both the in-memory array and the file in sync.</p>
+  <ol style="margin: 8px 0 8px 20px">
+    <li>Call <code>displayAllPatients()</code> (also sorts the array)</li>
+    <li>Read target ID via <code>scanf</code></li>
+    <li>Linear search for that ID in the sorted array</li>
+    <li>Confirm with <code>fgets</code> (avoids the leftover <code>'\n'</code> bug of <code>scanf("%c")</code>)</li>
+    <li>Left-shift all elements after the found index by one position</li>
+    <li>Decrement <code>numPatients</code></li>
+    <li>Call <code>rewriteLogFile()</code></li>
+  </ol>
+  <pre>// Left-shift deletion:
+// Before: [A][B][C][D]  (delete index 1 = B)
+// After shift: [A][C][D][D]
+// After numPatients--: [A][C][D]
+for (i = found; i &lt; numPatients - 1; i++)
+    patients[i] = patients[i + 1];
+numPatients--;</pre>
+
+  <!-- deleteAllRecords -->
+  <h3 id="deleteAll">deleteAllRecords()</h3>
+  <p><span class="badge green">void</span> Asks for exact confirmation string <code>"YES"</code> using <code>strcmp</code>, then sets <code>numPatients = 0</code> and opens the file in <code>"w"</code> mode (which truncates it to 0 bytes) and immediately closes it.</p>
+
+  <!-- deleteMenu -->
+  <h3 id="deleteMenu">deleteMenu()</h3>
+  <p><span class="badge green">void</span> A sub-menu using <code>switch-case</code> that dispatches to <code>deletePatientByID()</code> or <code>deleteAllRecords()</code>.</p>
+
+  <!-- displayMenu -->
+  <h3 id="displayMenu">displayMenu()</h3>
+  <p><span class="badge green">void</span> Prints the 6-option main menu using <code>printf</code> with ANSI colour codes for the border.</p>
+
+  <!-- main -->
+  <h3 id="main">main()</h3>
+  <p><span class="badge purple">int</span> Program entry point. Structure:</p>
+  <pre>int main() {
+    loadFromFile();           // restore past records
+    do {
+        displayMenu();
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1: addPatient();         break;
+            case 2: displayAllPatients(); break;
+            case 3: searchPatientByName();break;
+            case 4: viewLogFile();        break;
+            case 5: deleteMenu();         break;
+            case 6: /* exit message */    break;
+            default: /* invalid */
+        }
+    } while (choice != 6);
+    return 0;
+}</pre>
+  <p>A <strong>do-while</strong> loop is used (not while) so the menu is always shown at least once before checking the exit condition.</p>
+
+  <!-- ═══════════════ 6. CONCEPTS SUMMARY ═══════════════ -->
+  <h2 id="concepts">6. C Concepts Summary Table</h2>
+
+  <table>
+    <tr><th>Concept</th><th>Where Used</th><th>Key Point</th></tr>
+    <tr><td>struct</td><td>Patient definition, temp in sort</td><td>Groups heterogeneous data under one name</td></tr>
+    <tr><td>Array of structs</td><td>patients[MAX_PATIENTS]</td><td>Access fields via patients[i].field</td></tr>
+    <tr><td>Pointer to struct</td><td>classifyPriority, routeDepartment</td><td>Use <code>p-&gt;field</code>; allows modification of original</td></tr>
+    <tr><td>char array (string)</td><td>All string fields</td><td>Must use strcpy/strcmp/strstr, not = / ==</td></tr>
+    <tr><td>File I/O</td><td>logToFile, loadFromFile, rewriteLogFile</td><td>fopen/fprintf/fgets/fclose; modes a/r/w</td></tr>
+    <tr><td>Bubble sort</td><td>bubbleSortByScore</td><td>Descending sort using struct swap</td></tr>
+    <tr><td>if-else chain</td><td>calculateRiskScore, classifyPriority</td><td>Only the first matching branch executes</td></tr>
+    <tr><td>switch-case</td><td>main, deleteMenu</td><td>Cleaner dispatch than long if-else chains</td></tr>
+    <tr><td>do-while</td><td>main loop</td><td>Guarantees at least one execution</td></tr>
+    <tr><td>for loop</td><td>bubble sort, lowercase, shift-delete</td><td>Used when iteration count is known</td></tr>
+    <tr><td>while loop</td><td>loadFromFile, trim loops, buffer drain</td><td>Used when iteration count is unknown</td></tr>
+    <tr><td>Preprocessor macros</td><td>#define MAX_PATIENTS, colour codes</td><td>Replaced by the preprocessor before compilation</td></tr>
+    <tr><td>Global variables</td><td>patients[], numPatients, maxID</td><td>Accessible from all functions without passing as parameters</td></tr>
+    <tr><td>sscanf</td><td>loadFromFile</td><td>Parse structured text from a string, not from keyboard</td></tr>
+    <tr><td>time.h (time, localtime, strftime)</td><td>getCurrentTimestamp</td><td>Get and format current system date/time</td></tr>
+  </table>
+
+  <hr/>
+  <p style="text-align:center; color:#888; font-size:12px; margin-top:20px;">
+    Smart Hospital Priority &amp; Routing System — CS222IA PBL | RV College of Engineering<br/>
+    To save as PDF: open this file in a browser → File → Print → Save as PDF
+  </p>
+
+</div>
+</body>
+</html>
