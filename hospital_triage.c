@@ -15,110 +15,25 @@
  *  6. Displays ALL patients (current + past sessions) sorted by priority
  *  7. Delete a particular patient record OR clear all records
  *
- *  C CONCEPTS USED:
- *  structs, arrays of structs, functions, bubble sort,
- *  file handling (append / read / write / rewrite),
- *  string.h functions (explained below), if-else,
- *  switch-case, loops (for / while / do-while), time.h
- *
- * ============================================================
- *  STRING FUNCTIONS USED — FULL EXPLANATION
- * ============================================================
- *
- *  1. strcpy(destination, source)                [string.h]
- *     ─────────────────────────────────────────────────────
- *     Copies every character from 'source' into 'destination'
- *     including the null terminator '\0' at the end.
- *     WHY WE USE IT: In C you cannot assign strings with '='.
- *       char a[20];
- *       a = "hello";        <- ILLEGAL, won't compile
- *       strcpy(a, "hello"); <- CORRECT
- *     WHERE USED HERE:
- *       - strcpy(p->priority, "EMERGENCY") in classifyPriority()
- *       - strcpy(p->department, "Cardiology") in routeDepartment()
- *       - strcpy(sym, p->symptom) to make a lowercase working copy
- *       - strcpy(nameLower, patients[i].name) in search function
- *
- *  2. strcmp(string1, string2)                   [string.h]
- *     ─────────────────────────────────────────────────────
- *     Compares two strings character by character.
- *     Returns:
- *       0   -> strings are EQUAL
- *       > 0 -> string1 comes AFTER  string2 alphabetically
- *       < 0 -> string1 comes BEFORE string2 alphabetically
- *     WHY WE USE IT: In C you cannot compare strings with '=='.
- *       if (p->priority == "EMERGENCY")              <- WRONG
- *       if (strcmp(p->priority, "EMERGENCY") == 0)  <- CORRECT
- *     WHERE USED HERE:
- *       - Colour selection in displayAllPatients()
- *       - Confirming "YES" in deleteAllRecords()
- *
- *  3. strstr(haystack, needle)                   [string.h]
- *     ─────────────────────────────────────────────────────
- *     Searches for the first occurrence of 'needle' anywhere
- *     inside 'haystack'.
- *     Returns: pointer to match if found, NULL if not found.
- *     WHY WE USE IT: Keyword matching inside symptom strings
- *     without needing an exact full match.
- *       strstr("chest pain", "chest") -> returns pointer (truthy)
- *       strstr("fever",      "chest") -> returns NULL  (falsy)
- *     WHERE USED HERE:
- *       - routeDepartment() to match symptoms to departments
- *       - searchPatientByName() for partial name matching
- *
- *  4. strcspn(string, reject_set)                [string.h]
- *     ─────────────────────────────────────────────────────
- *     Returns the number of characters in 'string' BEFORE
- *     any character from 'reject_set' appears.
- *     WHY WE USE IT: fgets() keeps '\n' in the buffer.
- *     We use strcspn to find its index and replace with '\0'.
- *       buf = "Rajesh\n"
- *       strcspn(buf, "\n") -> 6
- *       buf[6] = '\0'      -> buf is now "Rajesh"
- *     WHERE USED HERE:
- *       - After every fgets() call (name, symptom, query, confirm)
- *
- *  5. strlen(string)                             [string.h]
- *     ─────────────────────────────────────────────────────
- *     Returns the number of characters in a string NOT counting
- *     the null terminator '\0'.
- *       strlen("hello") -> 5
- *     WHY WE USE IT: To find the last character index so we
- *     can trim trailing spaces left by fixed-width file format.
- *     WHERE USED HERE:
- *       - loadFromFile() to trim trailing spaces from parsed fields
- *
- *  6. strftime(buffer, size, format, tm_struct)  [time.h]
- *     ─────────────────────────────────────────────────────
- *     Formats a time struct into a human-readable string.
- *     Not from string.h but works exactly like a string formatter.
- *     Format codes: %Y=year %m=month %d=day %H=hour %M=min %S=sec
- *     WHERE USED HERE:
- *       - getCurrentTimestamp() -> "2026-05-07 11:30:00"
- *
- * ============================================================
- */
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-/* ── Constants ──────────────────────────────────────────── */
+
 #define MAX_PATIENTS  200
 #define LOG_FILE      "patients.txt"
 
-/* ── Terminal colour codes ──────────────────────────────── */
+
 #define RED    "\033[1;31m"
 #define YELLOW "\033[1;33m"
 #define GREEN  "\033[1;32m"
 #define CYAN   "\033[1;36m"
 #define RESET  "\033[0m"
 
-/* ============================================================
- *  STRUCT: Patient
- *  Groups all fields of one patient into a single named type.
- * ============================================================ */
+
 struct Patient {
     int    id;
     char   name[50];
@@ -133,41 +48,22 @@ struct Patient {
     char   timestamp[30];
 };
 
-/* ── Global array — holds patients from file + current session ── */
 struct Patient patients[MAX_PATIENTS];
 int numPatients = 0;
 
-/*
- * maxID — tracks the highest patient ID seen across ALL sessions.
- * WHY: numPatients resets to 0 each run, but after loadFromFile()
- * it equals the number of loaded records. If records were deleted,
- * gaps exist (e.g. IDs 1,3,4). Using numPatients+1 as the next ID
- * would collide with an existing ID.
- * FIX: loadFromFile() scans every loaded ID and keeps the largest.
- * New patients always get maxID+1, guaranteeing uniqueness forever.
- */
+
 int maxID = 0;
 
 
-/* ============================================================
- *  FUNCTION: getCurrentTimestamp
- *  Uses strftime() to format current date-time into buffer.
- * ============================================================ */
+
 void getCurrentTimestamp(char *buffer) {
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
-    strftime(buffer, 30, "%Y-%m-%d %H:%M:%S", t);  /* strftime explained above */
+    strftime(buffer, 30, "%Y-%m-%d %H:%M:%S", t);  
 }
 
 
-/* ============================================================
- *  FUNCTION: calculateRiskScore
- *  Assigns penalty points per abnormal vital, returns total.
- *
- *  Temperature:  >=39.5 +40 | >=38.0 +20 | <=35.0 +30
- *  Blood Press:  >=180  +40 | >=140  +20 | <=90   +30
- *  Pulse:        >=120  +30 | <=50   +30
- * ============================================================ */
+
 int calculateRiskScore(float temp, int bp, int pulse) {
     int score = 0;
 
