@@ -1,0 +1,2 @@
+[2026-06-03 14:38:23] ID:1 | Name:test1                | Age: 88 | Temp: 40.0 | BP:  88 | Pulse: 90 | Score: 70 | Priority:EMERGENCY  | Dept:Cardiology
+[2026-06-03 15:31:18] ID:2 | Name:test2                | Age: 67 | Temp: 39.0 | BP:  79 | Pulse:100 | Score: 50 | Priority:URGENT     | Dept:Cardiology

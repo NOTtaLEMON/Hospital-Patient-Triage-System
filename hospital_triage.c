@@ -14,7 +14,8 @@
  *  5. Logs all records with timestamps to patients.txt
  *  6. Displays ALL patients (current + past sessions) sorted by priority
  *  7. Delete a particular patient record OR clear all records
- *
+ * ============================================================
+ */
 
 
 #include <stdio.h>
@@ -27,11 +28,11 @@
 #define LOG_FILE      "patients.txt"
 
 
-#define RED    "\033[1;31m"
-#define YELLOW "\033[1;33m"
-#define GREEN  "\033[1;32m"
-#define CYAN   "\033[1;36m"
-#define RESET  "\033[0m"
+#define RED    ""
+#define YELLOW ""
+#define GREEN  ""
+#define CYAN   ""
+#define RESET  ""
 
 
 struct Patient {
@@ -82,11 +83,6 @@ int calculateRiskScore(float temp, int bp, int pulse) {
 }
 
 
-/* ============================================================
- *  FUNCTION: classifyPriority
- *  Sets p->priority string from risk score.
- *  Uses strcpy() — cannot assign string with '=' in C.
- * ============================================================ */
 void classifyPriority(struct Patient *p) {
     if      (p->riskScore >= 70) strcpy(p->priority, "EMERGENCY");
     else if (p->riskScore >= 35) strcpy(p->priority, "URGENT");
@@ -94,15 +90,6 @@ void classifyPriority(struct Patient *p) {
 }
 
 
-/* ============================================================
- *  FUNCTION: routeDepartment
- *  Maps symptom keywords to departments.
- *
- *  strcpy()  — copies symptom into local buffer 'sym'
- *  Manual lowercase loop — ensures "Chest" matches "chest"
- *  strstr()  — checks if keyword exists anywhere in symptom
- *  strcpy()  — writes department name into struct field
- * ============================================================ */
 void routeDepartment(struct Patient *p) {
     char sym[100];
     strcpy(sym, p->symptom);                /* strcpy: copy to safe buffer */
@@ -323,7 +310,7 @@ void addPatient() {
     patients[numPatients] = p;
     numPatients++;
 
-    printf("\n╔══════════════════════════════════════╗\n");
+    printf("\n+--------------------------------------+\n");
     printf("  Patient ID   : %d\n",  p.id);
     printf("  Name         : %s\n",  p.name);
     printf("  Risk Score   : %d\n",  p.riskScore);
@@ -338,7 +325,7 @@ void addPatient() {
 
     printf("  Department   : %s\n",  p.department);
     printf("  Registered   : %s\n",  p.timestamp);
-    printf("╚══════════════════════════════════════╝\n");
+    printf("+--------------------------------------+\n");
 
     logToFile(p);
     printf(GREEN "Record saved to %s\n" RESET, LOG_FILE);
@@ -561,6 +548,7 @@ void deleteAllRecords() {
     }
 
     numPatients = 0;
+    maxID = 0;
 
     FILE *fp = fopen(LOG_FILE, "w");  /* "w" empties the file instantly */
     if (fp) fclose(fp);
