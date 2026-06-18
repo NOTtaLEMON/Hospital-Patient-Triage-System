@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Priority &amp; Routing System</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sidebar-bg:   #1c3550;
+      --sidebar-w:    220px;
+      --blue:         #2472a4;
+      --blue-light:   #e8f2fb;
+      --blue-hover:   #1d5f8a;
+      --bg:           #f2f5f8;
+      --card-bg:      #ffffff;
+      --border:       #dde3ea;
+      --text:         #1e2a36;
+      --muted:        #6b7c8f;
+      --red:          #c0392b;
+      --red-light:    #fdf2f2;
+      --orange:       #d35400;
+      --orange-light: #fef5ec;
+      --green:        #1e8449;
+      --green-light:  #edfaf1;
+      --shadow:       0 1px 4px rgba(0,0,0,0.09);
+      --radius:       6px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── LOGIN ─────────────────────────────────────────── */
+    #login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--sidebar-bg);
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 40px 36px 32px;
+      width: 360px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .login-cross {
+      width: 40px;
+      height: 40px;
+      background: var(--blue);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .login-title { font-size: 17px; font-weight: 700; color: var(--text); }
+    .login-sub   { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+    .login-card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .login-card .lead {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: var(--text);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(36,114,164,0.12);
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .error-msg {
+      background: var(--red-light);
+      color: var(--red);
+      border: 1px solid #f5b7b1;
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 10px;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover { background: var(--blue-hover); }
+
+    .btn-secondary {
+      padding: 8px 18px;
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.12s;
+    }
+
+    .btn-secondary:hover { background: var(--bg); }
+
+    .btn-danger {
+      padding: 9px 20px;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .btn-danger:hover { background: #a93226; }
+
+    .btn-small {
+      padding: 4px 12px;
+      background: var(--blue-light);
+      color: var(--blue);
+      border: 1px solid #b8d9f0;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.12s;
+    }
+
+    .btn-small:hover { background: #d0e9f8; }
+
+    .login-tabs {
+      display: flex;
+      margin-bottom: 22px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .login-tab {
+      flex: 1;
+      padding: 9px;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .login-tab.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue);
+    }
+
+    .file-connect-btn {
+      width: 100%;
+      padding: 7px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.12s;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    .file-connect-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+
+    .file-status {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      padding: 0 2px 6px;
+      word-break: break-all;
+    }
+
+    .file-status.connected { color: #6fcf97; }
+
+    /* ── APP SHELL ──────────────────────────────────────── */
+    #app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ────────────────────────────────────────── */
+    #sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 18px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-cross {
+      width: 32px;
+      height: 32px;
+      background: var(--blue);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .sidebar-name { color: #e8f0f7; font-size: 15px; font-weight: 700; }
+    .sidebar-sub  { color: rgba(255,255,255,0.4); font-size: 11px; margin-top: 1px; }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 0;
+      overflow-y: auto;
+    }
+
+    .nav-label {
+      padding: 10px 18px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 18px;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: background 0.12s, color 0.12s;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.9);
+    }
+
+    .nav-item.active {
+      background: rgba(36,114,164,0.25);
+      color: #ffffff;
+      border-left-color: var(--blue);
+    }
+
+    .nav-item.danger { color: #e87c7c; }
+    .nav-item.danger:hover { background: rgba(192,57,43,0.18); color: #f1948a; }
+
+    .nav-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    #logout-btn {
+      width: 100%;
+      padding: 8px;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    #logout-btn:hover { background: rgba(255,255,255,0.14); color: white; }
+
+    /* ── MAIN ───────────────────────────────────────────── */
+    #main-content {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+    .quick-search {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      width: 220px;
+      outline: none;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .quick-search:focus { border-color: var(--blue); background: white; }
+
+    .user-badge {
+      background: var(--blue-light);
+      color: var(--blue);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .content-area { padding: 24px; flex: 1; }
+
+    /* ── SECTION ────────────────────────────────────────── */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── STATS GRID ─────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.blue   { background: var(--blue-light);   color: var(--blue);   }
+    .stat-icon.red    { background: var(--red-light);    color: var(--red);    }
+    .stat-icon.orange { background: var(--orange-light); color: var(--orange); }
+    .stat-icon.green  { background: var(--green-light);  color: var(--green);  }
+
+    .stat-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* ── CARDS ──────────────────────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-header.danger { color: var(--red); }
+
+    .card-body { padding: 18px; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* ── TABLES ─────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      background: #f7f9fb;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr { border-bottom: 1px solid #f0f3f6; }
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody tr:hover { background: #f7f9fb; }
+
+    tbody td {
+      padding: 10px 14px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* ── PRIORITY BADGES ────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .badge-emergency { background: var(--red-light);    color: var(--red);    border: 1px solid #f5c6c2; }
+    .badge-urgent    { background: var(--orange-light); color: var(--orange); border: 1px solid #f8d5b4; }
+    .badge-normal    { background: var(--green-light);  color: var(--green);  border: 1px solid #a9dfbd; }
+
+    /* ── ACTIVITY LOG ───────────────────────────────────── */
+    .activity-list { padding: 6px 0; }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 18px;
+      border-bottom: 1px solid #f5f7f9;
+      font-size: 13px;
+    }
+
+    .activity-item:last-child { border-bottom: none; }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.emergency { background: var(--red); }
+    .activity-dot.urgent    { background: var(--orange); }
+    .activity-dot.normal    { background: var(--green); }
+
+    .activity-text { flex: 1; color: var(--text); }
+    .activity-time { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .no-activity   { padding: 20px 18px; color: var(--muted); font-size: 13px; }
+
+    /* ── DEPT OVERVIEW ──────────────────────────────────── */
+    .dept-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 18px;
+      border-bottom: 1px solid #f5f7f9;
+      font-size: 13px;
+    }
+
+    .dept-row:last-child { border-bottom: none; }
+
+    .dept-name { flex: 1; color: var(--text); }
+    .dept-count {
+      background: var(--blue-light);
+      color: var(--blue);
+      padding: 2px 9px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* ── REGISTER FORM ──────────────────────────────────── */
+    .form-card .card-body { padding: 24px; }
+
+    .score-preview {
+      background: var(--blue-light);
+      border: 1px solid #b8d9f0;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding-top: 4px;
+    }
+
+    .register-form { padding: 24px; }
+
+    .result-card {
+      margin: 0 24px 24px;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      border: 1px solid;
+    }
+
+    .result-card.success {
+      background: var(--green-light);
+      border-color: #a9dfbd;
+      color: var(--green);
+    }
+
+    /* ── SEARCH ─────────────────────────────────────────── */
+    .search-section { padding: 20px; }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-input-lg {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+      color: var(--text);
+    }
+
+    .search-input-lg:focus { border-color: var(--blue); }
+
+    .search-result-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 10px;
+    }
+
+    .search-result-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .detail-item { font-size: 12px; }
+    .detail-item span { display: block; color: var(--muted); margin-bottom: 1px; }
+    .detail-item strong { color: var(--text); font-size: 13px; }
+
+    /* ── RAW LOG ────────────────────────────────────────── */
+    .raw-log-container {
+      padding: 16px 18px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .raw-log-line {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      padding: 3px 0;
+      color: var(--text);
+      border-bottom: 1px solid #f5f7f9;
+      word-break: break-all;
+    }
+
+    /* ── DELETE ─────────────────────────────────────────── */
+    .delete-form { padding: 20px; }
+
+    .warning-text {
+      color: var(--red);
+      font-size: 13px;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .delete-preview {
+      background: #fdf2f2;
+      border: 1px solid #f5c6c2;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      color: var(--red);
+    }
+
+    /* ── FILTER ROW ─────────────────────────────────────── */
+    .filter-input {
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+      width: 160px;
+    }
+
+    .filter-input:focus { border-color: var(--blue); }
+
+    .filter-select {
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+      cursor: pointer;
+      background: white;
+    }
+
+    .card-header-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── TOAST ──────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      color: white;
+      z-index: 9999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      max-width: 340px;
+    }
+
+    #toast.success { background: #1e6e3e; }
+    #toast.error   { background: var(--red); }
+    #toast.info    { background: var(--blue); }
+
+    /* ── SECTION HEADER ─────────────────────────────────── */
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+
+    .mb-16 { margin-bottom: 16px; }
+    .mb-20 { margin-bottom: 20px; }
+
+    /* ── ID CELL ────────────────────────────────────────── */
+    .id-cell {
+      font-family: 'Consolas', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════ LOGIN -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-cross">+</div>
+      <div>
+        <div class="login-title">MedTriage System</div>
+        <div class="login-sub">RV College of Engineering</div>
+      </div>
+    </div>
+
+    <div class="login-tabs">
+      <button class="login-tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+      <button class="login-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <div id="login-error" class="error-msg" style="display:none"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="login-user">Username</label>
+        <input type="text" id="login-user" placeholder="Enter username" autocomplete="username" autofocus>
+      </div>
+      <div class="form-group">
+        <label for="login-pass">Password</label>
+        <input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+
+    <form id="signup-form" style="display:none" autocomplete="off">
+      <div class="form-group">
+        <label for="signup-user">Username</label>
+        <input type="text" id="signup-user" placeholder="Choose a username">
+      </div>
+      <div class="form-group">
+        <label for="signup-pass">Password</label>
+        <input type="password" id="signup-pass" placeholder="Choose a password">
+      </div>
+      <div class="form-group">
+        <label for="signup-pass2">Confirm Password</label>
+        <input type="password" id="signup-pass2" placeholder="Repeat password">
+      </div>
+      <button type="submit" class="btn-primary">Create Account</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ APP -->
+<div id="app" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-cross">+</div>
+      <div>
+        <div class="sidebar-name">MedTriage</div>
+        <div class="sidebar-sub">Priority System</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a class="nav-item active" data-section="dashboard">
+        <span class="nav-icon">&#9635;</span> Dashboard
+      </a>
+      <a class="nav-item" data-section="register">
+        <span class="nav-icon">&#43;</span> Register Patient
+      </a>
+      <a class="nav-item" data-section="patients">
+        <span class="nav-icon">&#9776;</span> All Patients
+      </a>
+      <a class="nav-item" data-section="search">
+        <span class="nav-icon">&#8981;</span> Search Patient
+      </a>
+      <div class="nav-label">Records</div>
+      <a class="nav-item" data-section="log">
+        <span class="nav-icon">&#9776;</span> Raw Log File
+      </a>
+      <a class="nav-item danger" data-section="delete">
+        <span class="nav-icon">&#8855;</span> Delete Records
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="file-connect-btn" id="file-connect-btn" onclick="connectFile()">&#128196; Connect patients.txt</button>
+      <div class="file-status" id="file-status">No file connected &mdash; using local storage</div>
+      <button id="logout-btn">&#8592; Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-right">
+        <input type="text" class="quick-search" id="quick-search" placeholder="&#8981;  Quick search patient...">
+        <div class="user-badge" id="user-badge">Admin</div>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- ── DASHBOARD ── -->
+      <section id="section-dashboard" class="section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">&#128101;</div>
+            <div>
+              <div class="stat-value" id="stat-total">0</div>
+              <div class="stat-label">Total Patients</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">&#9888;</div>
+            <div>
+              <div class="stat-value" id="stat-emergency">0</div>
+              <div class="stat-label">Emergency</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">&#9679;</div>
+            <div>
+              <div class="stat-value" id="stat-urgent">0</div>
+              <div class="stat-label">Urgent</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">&#10003;</div>
+            <div>
+              <div class="stat-value" id="stat-normal">0</div>
+              <div class="stat-label">Normal</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col mb-20">
+          <div class="card">
+            <div class="card-header">Recent Activity</div>
+            <div id="recent-activity"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">Department Overview</div>
+            <div id="dept-overview"></div>
+          </div>
+        </div>
+
+        <div class="card mb-20">
+          <div class="card-header">
+            Patient Queue &mdash; Priority Sorted
+            <button class="btn-small" onclick="showSection('patients')">View All &rarr;</button>
+          </div>
+          <div class="table-wrap" id="dashboard-table"></div>
+        </div>
+      </section>
+
+      <!-- ── REGISTER PATIENT ── -->
+      <section id="section-register" class="section">
+        <div class="card form-card mb-16">
+          <div class="card-header">Register New Patient</div>
+          <div class="register-form">
+            <form id="register-form" autocomplete="off">
+              <div class="form-row mb-16">
+                <div class="form-group">
+                  <label>Patient Name *</label>
+                  <input type="text" id="reg-name" placeholder="Full name" required>
+                </div>
+                <div class="form-group">
+                  <label>Age *</label>
+                  <input type="number" id="reg-age" placeholder="Years" min="0" max="150" required>
+                </div>
+              </div>
+              <div class="form-row mb-16">
+                <div class="form-group">
+                  <label>Temperature (&#176;C) *</label>
+                  <input type="number" id="reg-temp" placeholder="e.g. 37.5" step="0.1" min="30" max="45" required>
+                </div>
+                <div class="form-group">
+                  <label>Blood Pressure (systolic mmHg) *</label>
+                  <input type="number" id="reg-bp" placeholder="e.g. 120" min="40" max="300" required>
+                </div>
+              </div>
+              <div class="form-row mb-16">
+                <div class="form-group">
+                  <label>Pulse (bpm) *</label>
+                  <input type="number" id="reg-pulse" placeholder="e.g. 80" min="20" max="300" required>
+                </div>
+                <div class="form-group">
+                  <label>Chief Symptom *</label>
+                  <input type="text" id="reg-symptom" placeholder="e.g. chest pain, fever, headache" required>
+                </div>
+              </div>
+
+              <div id="score-preview" class="score-preview" style="display:none">
+                <span>Risk Score: <strong id="preview-score">--</strong></span>
+                <span class="badge" id="preview-priority-badge"></span>
+                <span style="color:var(--muted)">&#8594;</span>
+                <span><strong id="preview-dept">--</strong></span>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="clearRegForm()">Clear</button>
+                <button type="submit" class="btn-primary" style="width:auto;padding:9px 28px">Register Patient</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="register-result" style="display:none" class="result-card success">
+          Patient registered successfully.
+        </div>
+      </section>
+
+      <!-- ── ALL PATIENTS ── -->
+      <section id="section-patients" class="section">
+        <div class="card">
+          <div class="card-header">
+            All Patients
+            <div class="card-header-right">
+              <input type="text" class="filter-input" id="patients-filter" placeholder="Filter by name...">
+              <select class="filter-select" id="patients-sort">
+                <option value="score">Sort: Risk Score</option>
+                <option value="id">Sort: ID</option>
+                <option value="name">Sort: Name</option>
+                <option value="priority">Sort: Priority</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap" id="all-patients-table"></div>
+        </div>
+      </section>
+
+      <!-- ── SEARCH ── -->
+      <section id="section-search" class="section">
+        <div class="card">
+          <div class="card-header">Search Patient by Name</div>
+          <div class="search-section">
+            <div class="search-row">
+              <input type="text" class="search-input-lg" id="search-query" placeholder="Type a name or partial name...">
+              <button class="btn-primary" style="width:auto;padding:9px 24px" onclick="performSearch()">Search</button>
+            </div>
+            <div id="search-results"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── RAW LOG ── -->
+      <section id="section-log" class="section">
+        <div class="card">
+          <div class="card-header">
+            Raw Log File &mdash; patients.txt format
+            <button class="btn-small" onclick="renderRawLog()">Refresh</button>
+          </div>
+          <div class="raw-log-container" id="raw-log"></div>
+        </div>
+      </section>
+
+      <!-- ── DELETE ── -->
+      <section id="section-delete" class="section">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">Delete Patient by ID</div>
+            <div class="delete-form">
+              <div class="form-group">
+                <label>Patient ID</label>
+                <input type="number" id="delete-id" placeholder="Enter patient ID" oninput="previewDelete()">
+              </div>
+              <div id="delete-preview" class="delete-preview" style="display:none"></div>
+              <button class="btn-danger" onclick="deleteById()">Delete Patient</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header danger">Clear All Records</div>
+            <div class="delete-form">
+              <p class="warning-text">
+                This will permanently remove all <strong id="clear-count">0</strong> patient records from the system.
+                This action cannot be undone.
+              </p>
+              <div class="form-group">
+                <label>Type <strong>YES</strong> to confirm</label>
+                <input type="text" id="confirm-clear" placeholder="Type YES here">
+              </div>
+              <button class="btn-danger" onclick="clearAll()">Clear All Records</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content-area -->
+  </main>
+</div><!-- /app -->
+
+<div id="toast" style="display:none"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DATA & STORAGE
+// ══════════════════════════════════════════════════════════════
+const STORAGE_KEY  = 'hospital_patients';
+const ACTIVITY_KEY = 'hospital_activity';
+const MAX_ID_KEY   = 'hospital_max_id';
+const USERS_KEY    = 'hospital_users';
+
+let currentUser = null;
+let fileHandle  = null;
+
+function getPatients() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function savePatients(arr) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+function saveAndSync(arr) {
+  savePatients(arr);
+  writePatientsToFile();
+}
+
+function getMaxID() {
+  return parseInt(localStorage.getItem(MAX_ID_KEY)) || 0;
+}
+
+function setMaxID(n) {
+  localStorage.setItem(MAX_ID_KEY, n);
+}
+
+function getActivity() {
+  try { return JSON.parse(localStorage.getItem(ACTIVITY_KEY)) || []; }
+  catch { return []; }
+}
+
+function addActivity(msg, priority) {
+  const list = getActivity();
+  const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  list.unshift({ msg, priority: priority.toLowerCase(), time: ts });
+  if (list.length > 20) list.pop();
+  localStorage.setItem(ACTIVITY_KEY, JSON.stringify(list));
+}
+
+// ══════════════════════════════════════════════════════════════
+//  USER MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; }
+  catch { return []; }
+}
+
+function ensureDefaultAdmin() {
+  const users = getUsers();
+  if (!users.find(u => u.username === 'admin')) {
+    users.push({ username: 'admin', password: 'hospital123' });
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+}
+
+function findUser(username, password) {
+  return getUsers().find(u => u.username === username && u.password === password);
+}
+
+function usernameExists(username) {
+  return getUsers().some(u => u.username === username);
+}
+
+function registerUser(username, password) {
+  const users = getUsers();
+  users.push({ username, password });
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FILE SYSTEM ACCESS API
+// ══════════════════════════════════════════════════════════════
+function formatLogLine(p) {
+  const name = p.name.padEnd(20, ' ');
+  const prio = p.priority.padEnd(10, ' ');
+  return `[${p.timestamp}] ID:${p.id} | Name:${name} | Age:${String(p.age).padStart(3)} | Temp:${p.temperature.toFixed(1).padStart(5)} | BP:${String(p.bp).padStart(4)} | Pulse:${String(p.pulse).padStart(3)} | Score:${String(p.riskScore).padStart(3)} | Priority:${prio} | Dept:${p.department}`;
+}
+
+function parseLogText(text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  const result = [];
+  const re = /^\[(.+?)\] ID:(\d+) \| Name:(.+?)\| Age:\s*(\d+) \| Temp:\s*([\d.]+) \| BP:\s*(\d+) \| Pulse:\s*(\d+) \| Score:\s*(\d+) \| Priority:([A-Z]+)\s*\| Dept:(.+)$/;
+  lines.forEach(line => {
+    const m = line.match(re);
+    if (m) {
+      result.push({
+        timestamp:   m[1].trim(),
+        id:          parseInt(m[2]),
+        name:        m[3].trim(),
+        age:         parseInt(m[4]),
+        temperature: parseFloat(m[5]),
+        bp:          parseInt(m[6]),
+        pulse:       parseInt(m[7]),
+        riskScore:   parseInt(m[8]),
+        priority:    m[9].trim(),
+        department:  m[10].trim(),
+        symptom:     '(from log)'
+      });
+    }
+  });
+  return result;
+}
+
+async function connectFile() {
+  if (!window.showOpenFilePicker) {
+    showToast('File System Access API not supported in this browser. Use Chrome or Edge.', 'error');
+    return;
+  }
+  try {
+    const [handle] = await window.showOpenFilePicker({
+      types: [{ description: 'Text Files', accept: { 'text/plain': ['.txt'] } }],
+      multiple: false
+    });
+    fileHandle = handle;
+    await loadPatientsFromFile();
+    updateFileStatus(true, handle.name);
+    showToast('Connected to ' + handle.name, 'success');
+  } catch (e) {
+    if (e.name !== 'AbortError') showToast('Could not open file.', 'error');
+  }
+}
+
+async function loadPatientsFromFile() {
+  if (!fileHandle) return;
+  try {
+    const file = await fileHandle.getFile();
+    const text = await file.text();
+    const parsed = parseLogText(text);
+    if (parsed.length) {
+      savePatients(parsed);
+      setMaxID(Math.max(...parsed.map(p => p.id)));
+    }
+  } catch(e) {
+    showToast('Could not read file: ' + e.message, 'error');
+  }
+}
+
+async function writePatientsToFile() {
+  if (!fileHandle) return;
+  try {
+    const writable = await fileHandle.createWritable();
+    const patients = getPatients();
+    const text = patients.map(formatLogLine).join('\n') + (patients.length ? '\n' : '');
+    await writable.write(text);
+    await writable.close();
+  } catch(e) {
+    showToast('File write failed: ' + e.message, 'error');
+  }
+}
+
+function updateFileStatus(connected, name) {
+  const btn = document.getElementById('file-connect-btn');
+  const status = document.getElementById('file-status');
+  if (connected) {
+    btn.textContent = '\u{1F4C4} ' + name;
+    status.textContent = 'Syncing to file';
+    status.className = 'file-status connected';
+  } else {
+    btn.innerHTML = '&#128196; Connect patients.txt';
+    status.textContent = 'No file connected \u2014 using local storage';
+    status.className = 'file-status';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MEDICAL LOGIC  (mirrors hospital_triage.c exactly)
+// ══════════════════════════════════════════════════════════════
+function calcRiskScore(temp, bp, pulse) {
+  let score = 0;
+  if      (temp >= 39.5) score += 40;
+  else if (temp >= 38.0) score += 20;
+  else if (temp <= 35.0) score += 30;
+  if      (bp >= 180)   score += 40;
+  else if (bp >= 140)   score += 20;
+  else if (bp <= 90)    score += 30;
+  if      (pulse >= 120) score += 30;
+  else if (pulse <= 50)  score += 30;
+  return score;
+}
+
+function classifyPriority(score) {
+  if (score >= 70) return 'EMERGENCY';
+  if (score >= 35) return 'URGENT';
+  return 'NORMAL';
+}
+
+function routeDepartment(symptom) {
+  const s = symptom.toLowerCase();
+  if (s.includes('chest') || s.includes('heart'))                                             return 'Cardiology';
+  if (s.includes('seizure') || s.includes('dizziness') || s.includes('headache') || s.includes('neuro')) return 'Neurology';
+  if (s.includes('fracture') || s.includes('bone') || s.includes('joint') || s.includes('sprain'))       return 'Orthopedics';
+  if (s.includes('fever') || s.includes('vomit') || s.includes('diarrhoea') || s.includes('abdomen'))    return 'General Medicine';
+  if (s.includes('burn') || s.includes('wound') || s.includes('injury'))                     return 'Emergency Surgery';
+  return 'General OPD';
+}
+
+function formatTimestamp(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BADGE / HELPERS
+// ══════════════════════════════════════════════════════════════
+function priorityBadge(p) {
+  const cls = p === 'EMERGENCY' ? 'badge-emergency' : p === 'URGENT' ? 'badge-urgent' : 'badge-normal';
+  return `<span class="badge ${cls}">${p}</span>`;
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type}`;
+  t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LOGIN / SIGN-UP
+// ══════════════════════════════════════════════════════════════
+ensureDefaultAdmin();
+
+function switchTab(tab) {
+  const isSignin = tab === 'signin';
+  document.getElementById('login-form').style.display  = isSignin ? '' : 'none';
+  document.getElementById('signup-form').style.display = isSignin ? 'none' : '';
+  document.getElementById('tab-signin').classList.toggle('active', isSignin);
+  document.getElementById('tab-signup').classList.toggle('active', !isSignin);
+  document.getElementById('login-error').style.display = 'none';
+}
+
+function launchApp(username) {
+  currentUser = username;
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('user-badge').textContent = username;
+  refreshDashboard();
+}
+
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const u   = document.getElementById('login-user').value.trim();
+  const p   = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+
+  if (!u || !p) { err.textContent = 'Please enter username and password.'; err.style.display = 'block'; return; }
+
+  if (findUser(u, p)) {
+    launchApp(u);
+  } else {
+    err.textContent = 'Invalid username or password.';
+    err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+  }
+});
+
+document.getElementById('signup-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const u  = document.getElementById('signup-user').value.trim();
+  const p  = document.getElementById('signup-pass').value;
+  const p2 = document.getElementById('signup-pass2').value;
+  const err = document.getElementById('login-error');
+
+  if (!u || !p) { err.textContent = 'Username and password are required.'; err.style.display = 'block'; return; }
+  if (u.length < 3) { err.textContent = 'Username must be at least 3 characters.'; err.style.display = 'block'; return; }
+  if (p.length < 6) { err.textContent = 'Password must be at least 6 characters.'; err.style.display = 'block'; return; }
+  if (p !== p2) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; return; }
+  if (usernameExists(u)) { err.textContent = 'Username already taken.'; err.style.display = 'block'; return; }
+
+  registerUser(u, p);
+  launchApp(u);
+});
+
+document.getElementById('logout-btn').addEventListener('click', function() {
+  currentUser = null;
+  fileHandle  = null;
+  updateFileStatus(false);
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('login-user').value  = '';
+  document.getElementById('login-pass').value  = '';
+  document.getElementById('signup-user').value = '';
+  document.getElementById('signup-pass').value = '';
+  document.getElementById('signup-pass2').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  switchTab('signin');
+});
+
+// ══════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════
+const sectionTitles = {
+  dashboard: 'Dashboard',
+  register:  'Register New Patient',
+  patients:  'All Patients',
+  search:    'Search Patient',
+  log:       'Raw Log File',
+  delete:    'Delete Records',
+};
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    showSection(this.dataset.section);
+  });
+});
+
+function showSection(name) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelector(`.nav-item[data-section="${name}"]`).classList.add('active');
+
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(`section-${name}`).classList.add('active');
+
+  document.getElementById('topbar-title').textContent = sectionTitles[name] || name;
+
+  if (name === 'dashboard') refreshDashboard();
+  if (name === 'patients')  renderAllPatients();
+  if (name === 'log')       renderRawLog();
+  if (name === 'delete') {
+    document.getElementById('clear-count').textContent = getPatients().length;
+    document.getElementById('delete-preview').style.display = 'none';
+    document.getElementById('delete-id').value = '';
+    document.getElementById('confirm-clear').value = '';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════════════
+function refreshDashboard() {
+  const patients = getPatients();
+  const emergency = patients.filter(p => p.priority === 'EMERGENCY').length;
+  const urgent    = patients.filter(p => p.priority === 'URGENT').length;
+  const normal    = patients.filter(p => p.priority === 'NORMAL').length;
+
+  document.getElementById('stat-total').textContent     = patients.length;
+  document.getElementById('stat-emergency').textContent = emergency;
+  document.getElementById('stat-urgent').textContent    = urgent;
+  document.getElementById('stat-normal').textContent    = normal;
+
+  renderRecentActivity();
+  renderDeptOverview(patients);
+  renderDashboardTable(patients);
+}
+
+function renderRecentActivity() {
+  const el = document.getElementById('recent-activity');
+  const acts = getActivity();
+  if (!acts.length) {
+    el.innerHTML = '<div class="no-activity">No recent activity.</div>';
+    return;
+  }
+  el.innerHTML = acts.slice(0, 8).map(a => `
+    <div class="activity-item">
+      <div class="activity-dot ${a.priority}"></div>
+      <div class="activity-text">${escHtml(a.msg)}</div>
+      <div class="activity-time">${a.time}</div>
+    </div>`).join('');
+}
+
+function renderDeptOverview(patients) {
+  const el = document.getElementById('dept-overview');
+  if (!patients.length) {
+    el.innerHTML = '<div class="no-activity">No patients registered.</div>';
+    return;
+  }
+  const deptMap = {};
+  patients.forEach(p => { deptMap[p.department] = (deptMap[p.department] || 0) + 1; });
+  const sorted = Object.entries(deptMap).sort((a,b) => b[1]-a[1]);
+  el.innerHTML = sorted.map(([dept, cnt]) => `
+    <div class="dept-row">
+      <div class="dept-name">${escHtml(dept)}</div>
+      <div class="dept-count">${cnt}</div>
+    </div>`).join('');
+}
+
+function renderDashboardTable(patients) {
+  const el = document.getElementById('dashboard-table');
+  const sorted = [...patients].sort((a,b) => b.riskScore - a.riskScore).slice(0, 8);
+  el.innerHTML = buildTable(sorted);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TABLE BUILDER
+// ══════════════════════════════════════════════════════════════
+function buildTable(rows) {
+  if (!rows.length) return '<div class="empty-state">No patient records found.</div>';
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Risk Score</th>
+          <th>Temp (&#176;C)</th>
+          <th>BP</th>
+          <th>Pulse</th>
+          <th>Priority</th>
+          <th>Department</th>
+          <th>Registered</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(p => `
+          <tr>
+            <td class="id-cell">#${p.id}</td>
+            <td><strong>${escHtml(p.name)}</strong></td>
+            <td>${p.age}</td>
+            <td><strong>${p.riskScore}</strong></td>
+            <td>${p.temperature.toFixed(1)}</td>
+            <td>${p.bp}</td>
+            <td>${p.pulse}</td>
+            <td>${priorityBadge(p.priority)}</td>
+            <td>${escHtml(p.department)}</td>
+            <td style="color:var(--muted);font-size:12px">${p.timestamp}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ALL PATIENTS
+// ══════════════════════════════════════════════════════════════
+function renderAllPatients() {
+  const filter   = (document.getElementById('patients-filter').value || '').toLowerCase();
+  const sortKey  = document.getElementById('patients-sort').value;
+  let patients   = getPatients();
+
+  if (filter) patients = patients.filter(p => p.name.toLowerCase().includes(filter));
+
+  if      (sortKey === 'score')    patients.sort((a,b) => b.riskScore - a.riskScore);
+  else if (sortKey === 'id')       patients.sort((a,b) => a.id - b.id);
+  else if (sortKey === 'name')     patients.sort((a,b) => a.name.localeCompare(b.name));
+  else if (sortKey === 'priority') {
+    const rank = { EMERGENCY: 0, URGENT: 1, NORMAL: 2 };
+    patients.sort((a,b) => rank[a.priority] - rank[b.priority]);
+  }
+
+  document.getElementById('all-patients-table').innerHTML = buildTable(patients);
+}
+
+document.getElementById('patients-filter').addEventListener('input', renderAllPatients);
+document.getElementById('patients-sort').addEventListener('change', renderAllPatients);
+
+// ══════════════════════════════════════════════════════════════
+//  REGISTER PATIENT
+// ══════════════════════════════════════════════════════════════
+['reg-temp', 'reg-bp', 'reg-pulse', 'reg-symptom'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateScorePreview);
+});
+
+function updateScorePreview() {
+  const temp    = parseFloat(document.getElementById('reg-temp').value);
+  const bp      = parseInt(document.getElementById('reg-bp').value);
+  const pulse   = parseInt(document.getElementById('reg-pulse').value);
+  const symptom = document.getElementById('reg-symptom').value.trim();
+
+  const preview = document.getElementById('score-preview');
+
+  if (!isNaN(temp) && !isNaN(bp) && !isNaN(pulse)) {
+    const score    = calcRiskScore(temp, bp, pulse);
+    const priority = classifyPriority(score);
+    const dept     = symptom ? routeDepartment(symptom) : '--';
+
+    document.getElementById('preview-score').textContent = score;
+    const badge = document.getElementById('preview-priority-badge');
+    badge.textContent = priority;
+    badge.className = 'badge ' + (priority === 'EMERGENCY' ? 'badge-emergency' : priority === 'URGENT' ? 'badge-urgent' : 'badge-normal');
+    document.getElementById('preview-dept').textContent = dept;
+    preview.style.display = 'flex';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+document.getElementById('register-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const name    = document.getElementById('reg-name').value.trim();
+  const age     = parseInt(document.getElementById('reg-age').value);
+  const temp    = parseFloat(document.getElementById('reg-temp').value);
+  const bp      = parseInt(document.getElementById('reg-bp').value);
+  const pulse   = parseInt(document.getElementById('reg-pulse').value);
+  const symptom = document.getElementById('reg-symptom').value.trim();
+
+  const score    = calcRiskScore(temp, bp, pulse);
+  const priority = classifyPriority(score);
+  const dept     = routeDepartment(symptom);
+  const newID    = getMaxID() + 1;
+  setMaxID(newID);
+
+  const patient = {
+    id: newID, name, age, temperature: temp, bp, pulse, symptom,
+    riskScore: score, priority, department: dept,
+    timestamp: formatTimestamp(new Date())
+  };
+
+  const patients = getPatients();
+  patients.push(patient);
+  saveAndSync(patients);
+  addActivity(`Patient #${newID} ${name} registered as ${priority}`, priority);
+
+  const res = document.getElementById('register-result');
+  res.innerHTML = `
+    <strong>Patient registered successfully.</strong><br>
+    ID: #${newID} &nbsp;&bull;&nbsp; ${escHtml(name)} &nbsp;&bull;&nbsp; Risk Score: ${score} &nbsp;&bull;&nbsp;
+    ${priorityBadge(priority)} &nbsp;&bull;&nbsp; ${escHtml(dept)}`;
+  res.style.display = 'block';
+  res.className = 'result-card success';
+
+  showToast(`Patient #${newID} registered — ${priority}`, 'success');
+  clearRegForm(true);
+});
+
+function clearRegForm(keepResult) {
+  ['reg-name','reg-age','reg-temp','reg-bp','reg-pulse','reg-symptom'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('score-preview').style.display = 'none';
+  if (!keepResult) document.getElementById('register-result').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SEARCH
+// ══════════════════════════════════════════════════════════════
+document.getElementById('search-query').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') performSearch();
+});
+
+function performSearch() {
+  const query    = document.getElementById('search-query').value.trim().toLowerCase();
+  const resultsEl = document.getElementById('search-results');
+
+  if (!query) { resultsEl.innerHTML = '<div class="empty-state">Enter a name to search.</div>'; return; }
+
+  const matches = getPatients().filter(p => p.name.toLowerCase().includes(query));
+
+  if (!matches.length) {
+    resultsEl.innerHTML = `<div class="empty-state">No patients found matching "<strong>${escHtml(query)}</strong>".</div>`;
+    return;
+  }
+
+  resultsEl.innerHTML = matches.map(p => `
+    <div class="search-result-card">
+      <h4>${escHtml(p.name)} &nbsp; ${priorityBadge(p.priority)}</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><span>Patient ID</span><strong>#${p.id}</strong></div>
+        <div class="detail-item"><span>Age</span><strong>${p.age} yrs</strong></div>
+        <div class="detail-item"><span>Risk Score</span><strong>${p.riskScore}</strong></div>
+        <div class="detail-item"><span>Temperature</span><strong>${p.temperature.toFixed(1)} &#176;C</strong></div>
+        <div class="detail-item"><span>Blood Pressure</span><strong>${p.bp} mmHg</strong></div>
+        <div class="detail-item"><span>Pulse</span><strong>${p.pulse} bpm</strong></div>
+        <div class="detail-item"><span>Department</span><strong>${escHtml(p.department)}</strong></div>
+        <div class="detail-item"><span>Symptom</span><strong>${escHtml(p.symptom)}</strong></div>
+        <div class="detail-item"><span>Registered</span><strong>${p.timestamp}</strong></div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RAW LOG
+// ══════════════════════════════════════════════════════════════
+function renderRawLog() {
+  const el = document.getElementById('raw-log');
+  const patients = getPatients();
+  if (!patients.length) {
+    el.innerHTML = '<div class="no-activity">No records in log.</div>';
+    return;
+  }
+  el.innerHTML = patients.map(p => `<div class="raw-log-line">${escHtml(formatLogLine(p))}</div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DELETE
+// ══════════════════════════════════════════════════════════════
+function previewDelete() {
+  const id = parseInt(document.getElementById('delete-id').value);
+  const preview = document.getElementById('delete-preview');
+  if (isNaN(id)) { preview.style.display = 'none'; return; }
+
+  const p = getPatients().find(x => x.id === id);
+  if (p) {
+    preview.style.display = 'block';
+    preview.innerHTML = `Will delete: <strong>#${p.id} ${escHtml(p.name)}</strong> &mdash; ${p.priority}, ${escHtml(p.department)}`;
+  } else {
+    preview.style.display = 'block';
+    preview.innerHTML = `No patient found with ID <strong>${id}</strong>.`;
+  }
+}
+
+function deleteById() {
+  const id = parseInt(document.getElementById('delete-id').value);
+  if (isNaN(id)) { showToast('Enter a valid patient ID.', 'error'); return; }
+
+  let patients = getPatients();
+  const idx = patients.findIndex(p => p.id === id);
+  if (idx === -1) { showToast(`No patient found with ID ${id}.`, 'error'); return; }
+
+  const name = patients[idx].name;
+  patients.splice(idx, 1);
+  saveAndSync(patients);
+  addActivity(`Patient #${id} ${name} deleted`, 'normal');
+  document.getElementById('delete-id').value = '';
+  document.getElementById('delete-preview').style.display = 'none';
+  document.getElementById('clear-count').textContent = patients.length;
+  showToast(`Patient #${id} deleted.`, 'info');
+}
+
+function clearAll() {
+  const confirm = document.getElementById('confirm-clear').value.trim();
+  if (confirm !== 'YES') { showToast('Type YES to confirm clearing all records.', 'error'); return; }
+
+  saveAndSync([]);
+  setMaxID(0);
+  localStorage.removeItem(ACTIVITY_KEY);
+  document.getElementById('confirm-clear').value = '';
+  document.getElementById('clear-count').textContent = 0;
+  showToast('All records cleared.', 'info');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  QUICK SEARCH (topbar)
+// ══════════════════════════════════════════════════════════════
+document.getElementById('quick-search').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim()) {
+    showSection('search');
+    document.getElementById('search-query').value = this.value.trim();
+    performSearch();
+    this.value = '';
+  }
+});
+
+// ══════════════════════════════════════════════════════════════
+//  UTILITY
+// ══════════════════════════════════════════════════════════════
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
